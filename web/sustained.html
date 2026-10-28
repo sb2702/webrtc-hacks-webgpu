@@ -1,0 +1,79 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sustained load windows</title>
+<style>
+  body { font: 14px/1.45 system-ui, sans-serif; margin: 0; }
+  main { padding: 140px 24px 24px; max-width: 1000px; }
+  #banner { position: fixed; inset: 0 0 auto 0; padding: 28px; font: bold 40px system-ui; text-align: center; color: #fff; background: #444; }
+  fieldset { border: 1px solid #ccc; border-radius: 6px; margin: 0 0 12px; }
+  label { margin-right: 14px; white-space: nowrap; }
+  pre { background: #f4f4f4; padding: 12px; }
+</style>
+
+<div id="banner">Idle</div>
+<main>
+  <h1>Sustained load windows</h1>
+  <p>Runs each selected pipeline flat out (360p transcode, looping) for a fixed window, with idle gaps in
+    between, so its hardware usage stands out in a system monitor — e.g. <code>macmon</code> or
+    <code>sudo powermetrics --samplers cpu_power,gpu_power,ane_power</code> on macOS,
+    <code>intel_gpu_top</code> / <code>nvtop</code> on Linux, Task Manager on Windows. The banner and the tab
+    title say what is running; the log below records wall-clock times.</p>
+  <fieldset id="pipelines"><legend>Pipelines (in order)</legend></fieldset>
+  <fieldset>
+    <legend>Timing</legend>
+    <label>Window (s) <input id="window" type="number" value="20" min="5" style="width: 4em"></label>
+    <label>Idle gap (s) <input id="gap" type="number" value="12" min="0" style="width: 4em"></label>
+    <button id="start">Start</button>
+  </fieldset>
+  <pre id="log"></pre>
+</main>
+
+<script type="module">
+  import { PIPELINES } from './src/pipelines.js'
+  import { runOnce } from './src/bench.js'
+
+  const $ = (id) => document.getElementById(id)
+  const DEFAULT = ['webnn-npu-fp16', 'webnn-gpu-fp16', 'webnn-gpu', 'webnn-cpu', 'webgpu']
+  const COLORS = ['#b00', '#c60', '#06a', '#080', '#609', '#a06', '#066', '#660']
+  for (const [name, { label }] of Object.entries(PIPELINES)) {
+    $('pipelines').insertAdjacentHTML('beforeend',
+      `<label><input type="checkbox" value="${name}" ${DEFAULT.includes(name) ? 'checked' : ''}> ${label}</label>`)
+  }
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
+  const clock = () => new Date().toLocaleTimeString('en-GB', { hour12: false })
+  const show = (text, bg = '#444') => {
+    $('banner').textContent = text
+    $('banner').style.background = bg
+    document.title = text
+  }
+  const log = (line) => ($('log').textContent += line + '\n')
+
+  async function start() {
+    const names = [...$('pipelines').querySelectorAll('input:checked')].map((i) => i.value)
+    const windowMs = Number($('window').value) * 1000, gap = Number($('gap').value)
+    const blob = await (await fetch('/media/woman_on_video_call_360p.mp4')).blob()
+    const file = new File([blob], 'woman_on_video_call_360p.mp4', { type: 'video/mp4' })
+    const results = []
+    for (const [i, name] of names.entries()) {
+      const label = PIPELINES[name].label
+      show(`Preparing ${label}…`)
+      const pipeline = await PIPELINES[name].create()
+      await runOnce(pipeline, file, 'transcode')   // warm-up
+      for (let s = gap; s > 0; s--) { show(`IDLE — next: ${label} in ${s}s`); await sleep(1000) }
+      show(`RUNNING: ${label}`, COLORS[i % COLORS.length])
+      const startedAt = clock(), t0 = performance.now()
+      let frames = 0
+      while (performance.now() - t0 < windowMs) frames += (await runOnce(pipeline, file, 'transcode')).frames
+      const fps = frames / ((performance.now() - t0) / 1000)
+      log(`${startedAt}–${clock()}  ${label.padEnd(40)} ${fps.toFixed(0)} fps`)
+      results.push({ name, label, start: startedAt, end: clock(), fps })
+      pipeline.destroy?.()
+    }
+    show('Done')
+    return results
+  }
+
+  $('start').onclick = start
+  window.sustained = { start }
+</script>

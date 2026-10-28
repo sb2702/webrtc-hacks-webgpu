@@ -1,0 +1,156 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Background replacement benchmark</title>
+<style>
+  body { font: 14px/1.45 system-ui, sans-serif; margin: 24px; max-width: 1100px; }
+  fieldset { border: 1px solid #ccc; border-radius: 6px; margin: 0 0 12px; }
+  label { margin-right: 14px; white-space: nowrap; }
+  table { border-collapse: collapse; margin: 12px 0; font-variant-numeric: tabular-nums; }
+  th, td { padding: 4px 12px; border-bottom: 1px solid #ddd; text-align: right; }
+  th:first-child, td:first-child { text-align: left; }
+  #status { color: #555; min-height: 1.4em; }
+  #env { color: #555; font-size: 13px; }
+  #checks { display: flex; flex-wrap: wrap; gap: 12px; }
+  #checks figure { margin: 0; font-size: 12px; }
+  #checks canvas, #outputs video { width: 256px; display: block; }
+  #outputs { display: flex; flex-wrap: wrap; gap: 12px; }
+  .err { color: #c00; }
+</style>
+
+<h1>Background replacement: decode → segment → composite → encode</h1>
+<p id="env"></p>
+<p>Close other tabs and apps, plug in the power, and run <b>Check outputs</b> before trusting any timings.
+  See <code>docs/METHODOLOGY.md</code> for what is measured.</p>
+<fieldset id="pipelines"><legend>Pipelines</legend></fieldset>
+<fieldset>
+  <legend>Run</legend>
+  <label>Mode
+    <select id="mode">
+      <option value="transcode">Transcode (decode → process → encode → mux)</option>
+      <option value="process">Process only (wait for each output frame)</option>
+    </select>
+  </label>
+  <label>Order
+    <select id="order">
+      <option value="sequential">Sequential</option>
+      <option value="interleaved">Interleaved (shuffled rounds)</option>
+    </select>
+  </label>
+  <label>Timed runs <input id="runs" type="number" min="1" value="5" style="width: 4em"></label>
+  <label>Sample
+    <select id="sample">
+      <option value="/media/woman_on_video_call_360p.mp4">360p</option>
+      <option value="/media/woman_on_video_call.mp4">720p</option>
+    </select>
+  </label>
+  <label>or file <input id="file" type="file" accept="video/mp4"></label>
+  <button id="check">Check outputs</button>
+  <button id="run">Run benchmark</button>
+  <button id="download" disabled>Download JSON</button>
+</fieldset>
+<div id="status"></div>
+<table id="results" hidden>
+  <thead><tr><th>Pipeline</th><th>Median FPS</th><th>Min–max FPS</th><th>process() ms (mean)</th><th>Init ms</th><th>Runs (fps)</th></tr></thead>
+  <tbody></tbody>
+</table>
+<div id="checks"></div>
+<div id="outputs"></div>
+
+<script type="module">
+  import { PIPELINES } from './src/pipelines.js'
+  import { benchmarkAll, checkOutputs, environment } from './src/bench.js'
+
+  const $ = (id) => document.getElementById(id)
+  const params = new URLSearchParams(location.search)
+  const selected = params.get('pipelines')?.split(',') ?? Object.entries(PIPELINES).filter(([, p]) => p.default !== false).map(([n]) => n)
+  for (const [name, { label }] of Object.entries(PIPELINES)) {
+    $('pipelines').insertAdjacentHTML('beforeend',
+      `<label><input type="checkbox" value="${name}" ${selected.includes(name) ? 'checked' : ''}> ${label}</label>`)
+  }
+  for (const key of ['mode', 'runs', 'order']) if (params.get(key)) $(key).value = params.get(key)
+  if (params.get('sample')) $('sample').value = `/media/woman_on_video_call${params.get('sample') === '720p' ? '' : '_360p'}.mp4`
+
+  const env = await environment()
+  $('env').textContent = `GPU: ${env.webgpu ? [env.webgpu.vendor, env.webgpu.architecture, env.webgpu.description].filter(Boolean).join(' ') : 'no WebGPU'}` +
+    ` · WebNN: ${env.webnn} · cross-origin isolated: ${env.crossOriginIsolated}` +
+    ` · ${navigator.userAgent.match(/Chrome\/[\d.]+|Firefox\/[\d.]+|Version\/[\d.]+ Safari/)?.[0] ?? ''}`
+
+  async function getFile() {
+    if ($('file').files[0]) return $('file').files[0]
+    const url = $('sample').value
+    const blob = await (await fetch(url)).blob()
+    return new File([blob], url.split('/').pop(), { type: 'video/mp4' })
+  }
+  const chosen = () => [...$('pipelines').querySelectorAll('input:checked')].map((i) => i.value)
+  const status = (s) => ($('status').textContent = s)
+  let lastReport = null
+
+  function addRow(r, blob) {
+    const tbody = $('results').querySelector('tbody')
+    if (r.error) {
+      tbody.insertAdjacentHTML('beforeend', `<tr><td>${r.label}</td><td colspan="5" class="err">${r.error}</td></tr>`)
+      return
+    }
+    const meanProcess = r.runs.reduce((a, x) => a + x.meanProcessMs, 0) / r.runs.length
+    tbody.insertAdjacentHTML('beforeend', `<tr><td>${r.label}</td><td>${r.medianFps.toFixed(1)}</td>` +
+      `<td>${r.minFps.toFixed(0)}–${r.maxFps.toFixed(0)}</td><td>${meanProcess.toFixed(2)}</td><td>${r.initMs.toFixed(0)}</td>` +
+      `<td>${r.runs.map((x) => x.fps.toFixed(0)).join(' / ')}</td></tr>`)
+    if (blob) {
+      const v = Object.assign(document.createElement('video'), { src: URL.createObjectURL(blob), controls: true, muted: true, loop: true })
+      const fig = document.createElement('figure')
+      fig.append(v, Object.assign(document.createElement('figcaption'), { textContent: r.label }))
+      $('outputs').append(fig)
+    }
+  }
+
+  async function runAll() {
+    const file = await getFile()
+    $('results').querySelector('tbody').replaceChildren()
+    $('outputs').replaceChildren()
+    $('results').hidden = false
+    $('download').disabled = true
+    const report = await benchmarkAll(chosen(), file, {
+      mode: $('mode').value, runs: Number($('runs').value), order: $('order').value,
+      onProgress: status, onResult: addRow,
+    })
+    status(`Done (${report.config.mode}, ${report.config.order}, ${report.config.width}x${report.config.height}).`)
+    lastReport = report
+    $('download').disabled = false
+    return report
+  }
+
+  async function checkAll() {
+    status('Checking outputs…')
+    const out = await checkOutputs(chosen(), await getFile())
+    $('checks').replaceChildren()
+    for (const [name, r] of Object.entries(out)) {
+      const fig = document.createElement('figure')
+      if (r.error) {
+        fig.append(Object.assign(document.createElement('figcaption'), { className: 'err', textContent: `${PIPELINES[name].label}: ${r.error}` }))
+      } else {
+        const c = document.createElement('canvas')
+        c.width = r.bitmap.width; c.height = r.bitmap.height
+        c.getContext('2d').drawImage(r.bitmap, 0, 0)
+        fig.append(c, Object.assign(document.createElement('figcaption'), {
+          textContent: `${PIPELINES[name].label}: ${(r.background * 100).toFixed(1)}% background` +
+            (r.agreement != null ? `, ${(r.agreement * 100).toFixed(1)}% agree w/ WebGPU` : ''),
+        }))
+      }
+      $('checks').append(fig)
+    }
+    status('Checked.')
+    return Object.fromEntries(Object.entries(out).map(([k, r]) => [k, r.error ? { error: r.error } : { background: r.background, agreement: r.agreement }]))
+  }
+
+  $('download').onclick = () => {
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(lastReport, null, 2)], { type: 'application/json' }))
+    a.download = `bench-${lastReport.environment.date.slice(0, 10)}-${lastReport.config.mode}-${lastReport.config.height}p.json`
+    a.click()
+  }
+  $('run').onclick = runAll
+  $('check').onclick = checkAll
+  // Hooks for tools/bench.mjs
+  window.bench = { runAll, checkAll }
+</script>

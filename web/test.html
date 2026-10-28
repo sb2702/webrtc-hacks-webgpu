@@ -1,0 +1,72 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Selfie segmenter correctness</title>
+<style>
+  body { font: 14px/1.4 system-ui, sans-serif; margin: 24px; }
+  canvas { width: 256px; height: 256px; image-rendering: pixelated; border: 1px solid #ccc; margin-right: 8px; }
+  .pass { color: #080; } .fail { color: #c00; }
+</style>
+<h1>Selfie segmenter: GPU ports vs TFLite</h1>
+<p>Feeds tools/selfie_numpy.py's golden 256×256 input to each backend and compares the mask against the TFLite interpreter's.</p>
+<pre id="log"></pre>
+<div id="masks"></div>
+<script type="module">
+  import { loadWeights } from './src/selfie/weights.js'
+  import { buildSelfie } from './src/selfie/model.js'
+  import { WebGPUBackend } from './src/selfie/webgpu.js'
+  import { WebGLBackend } from './src/selfie/webgl.js'
+  import { WebNNBackend } from './src/selfie/webnn.js'
+
+  const TOLERANCE = 1e-3
+  const log = (msg, cls) => {
+    const line = document.createElement('span')
+    line.textContent = msg + '\n'
+    if (cls) line.className = cls
+    document.getElementById('log').append(line)
+  }
+  const f32 = (url) => fetch(url).then((r) => r.arrayBuffer()).then((b) => new Float32Array(b))
+
+  function showMask(mask, label) {
+    const canvas = document.createElement('canvas')
+    canvas.width = canvas.height = 256
+    canvas.title = label
+    const img = new ImageData(256, 256)
+    mask.forEach((v, i) => img.data.set([v * 255, v * 255, v * 255, 255], i * 4))
+    canvas.getContext('2d').putImageData(img, 0, 0)
+    document.getElementById('masks').append(canvas)
+  }
+
+  const [weights, input, expected] = await Promise.all([
+    loadWeights('./models/selfie_segmenter'),
+    f32('./test_data/input_256.f32'),
+    f32('./test_data/mask_256.f32'),
+  ])
+  showMask(expected, 'tflite')
+
+  const results = {}
+  const BACKENDS = {
+    webgpu: () => WebGPUBackend.create(),
+    webgl: () => WebGLBackend.create(document.createElement('canvas')),
+    ...('ml' in navigator && Object.fromEntries(['cpu', 'gpu', 'npu'].map((d) => [`webnn-${d}`, () => WebNNBackend.create({ deviceType: d })]))),
+  }
+  for (const [name, create] of Object.entries(BACKENDS)) {
+    try {
+      const backend = await create()
+      const { input: inputTensor, mask } = buildSelfie(backend, weights)
+      await backend.compile?.(inputTensor, mask)
+      backend.write(inputTensor, input, 3)
+      backend.infer()
+      const out = await backend.read(mask, 1)
+      let maxErr = 0
+      for (let i = 0; i < out.length; i++) maxErr = Math.max(maxErr, Math.abs(out[i] - expected[i]))
+      const pass = maxErr < TOLERANCE
+      results[name] = { pass, maxErr, dispatches: backend.dispatches }
+      log(`${name}: max |gpu - tflite| = ${maxErr.toExponential(2)}  (${backend.dispatches} passes)  ${pass ? 'PASS' : 'FAIL'}`, pass ? 'pass' : 'fail')
+      showMask(out, name)
+    } catch (e) {
+      results[name] = { pass: false, error: String(e) }
+      log(`${name}: ERROR ${e.message}`, 'fail')
+    }
+  }
+  window.testResults = results
+</script>

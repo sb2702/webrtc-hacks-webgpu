@@ -1,0 +1,81 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WebGPU per-layer profile</title>
+<style>
+  body { font: 14px/1.45 system-ui, sans-serif; margin: 24px; max-width: 900px; }
+  table { border-collapse: collapse; font-variant-numeric: tabular-nums; margin: 12px 0; }
+  th, td { padding: 4px 12px; border-bottom: 1px solid #ddd; text-align: right; }
+  th:first-child, td:first-child { text-align: left; }
+</style>
+
+<h1>Our WebGPU network: GPU time per layer type</h1>
+<p>Runs the network (no frame I/O) with a <code>timestamp-query</code> pair around every dispatch, each in its own
+  compute pass. Per-pass timestamps add a little overhead and stop the GPU from overlapping passes, so the
+  total is an upper bound on the real per-frame cost — use it for the breakdown, not the absolute number.</p>
+<p id="status">Running…</p>
+<table hidden><thead><tr><th>Layer type</th><th>Dispatches</th><th>GPU ms / frame</th><th>Share</th></tr></thead><tbody></tbody></table>
+
+<script type="module">
+  import { WebGPUBackend } from './src/selfie/webgpu.js'
+  import { buildSelfie } from './src/selfie/model.js'
+  import { loadWeights } from './src/selfie/weights.js'
+
+  const FRAMES = 50, WARMUP = 5
+
+  async function profile() {
+    const adapter = await navigator.gpu?.requestAdapter({ powerPreference: 'high-performance' })
+    if (!adapter?.features.has('timestamp-query')) throw new Error('timestamp-query is not available on this adapter')
+    const device = await adapter.requestDevice({ requiredFeatures: ['timestamp-query'] })
+    const net = await WebGPUBackend.create(device)
+    buildSelfie(net, await loadWeights('/models/selfie_segmenter'))
+
+    const n = net.ops.length
+    const kindOf = new Map([...net.pipelines].map(([key, pipeline]) => [pipeline, key.split(':')[0]]))
+    const kinds = net.ops.map((op) => kindOf.get(op.pipeline))
+    const querySet = device.createQuerySet({ type: 'timestamp', count: n * 2 })
+    const resolve = device.createBuffer({ size: n * 16, usage: GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.COPY_SRC })
+    const read = device.createBuffer({ size: n * 16, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ })
+
+    const totals = {}
+    for (let frame = 0; frame < WARMUP + FRAMES; frame++) {
+      const encoder = device.createCommandEncoder()
+      net.ops.forEach((op, i) => {
+        const pass = encoder.beginComputePass({ timestampWrites: { querySet, beginningOfPassWriteIndex: 2 * i, endOfPassWriteIndex: 2 * i + 1 } })
+        pass.setPipeline(op.pipeline)
+        pass.setBindGroup(0, op.bindGroup)
+        pass.dispatchWorkgroups(...op.workgroups)
+        pass.end()
+      })
+      encoder.resolveQuerySet(querySet, 0, n * 2, resolve, 0)
+      encoder.copyBufferToBuffer(resolve, 0, read, 0, n * 16)
+      device.queue.submit([encoder.finish()])
+      await read.mapAsync(GPUMapMode.READ)
+      const t = new BigInt64Array(read.getMappedRange().slice(0))
+      read.unmap()
+      if (frame < WARMUP) continue
+      kinds.forEach((k, i) => { totals[k] = (totals[k] ?? 0) + Number(t[2 * i + 1] - t[2 * i]) / 1e6 / FRAMES })
+    }
+    const total = Object.values(totals).reduce((a, b) => a + b, 0)
+    return {
+      adapter: [adapter.info.vendor, adapter.info.architecture, adapter.info.description].filter(Boolean).join(' '),
+      totalMs: total,
+      layers: Object.entries(totals).sort((a, b) => b[1] - a[1])
+        .map(([kind, ms]) => ({ kind, dispatches: kinds.filter((k) => k === kind).length, ms, share: ms / total })),
+    }
+  }
+
+  try {
+    const r = await profile()
+    const tbody = document.querySelector('tbody')
+    for (const l of r.layers)
+      tbody.insertAdjacentHTML('beforeend', `<tr><td>${l.kind}</td><td>${l.dispatches}</td><td>${l.ms.toFixed(3)}</td><td>${(l.share * 100).toFixed(1)}%</td></tr>`)
+    tbody.insertAdjacentHTML('beforeend', `<tr><th>Total</th><th>${r.layers.reduce((a, l) => a + l.dispatches, 0)}</th><th>${r.totalMs.toFixed(3)}</th><th></th></tr>`)
+    document.querySelector('table').hidden = false
+    document.getElementById('status').textContent = `${r.adapter} — mean of ${FRAMES} frames after ${WARMUP} warm-up.`
+    window.profileResult = r
+  } catch (e) {
+    document.getElementById('status').textContent = `Error: ${e.message}`
+    window.profileResult = { error: e.message }
+  }
+</script>

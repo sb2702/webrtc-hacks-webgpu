@@ -1,0 +1,5 @@
+# Only needed to re-derive the weights / goldens (tools/*.py); the browser code doesn't need Python.
+tensorflow>=2.16,<2.20   # tf.lite.Interpreter is the TFLite reference implementation
+numpy
+pillow
+flatbuffers
