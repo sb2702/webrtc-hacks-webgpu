@@ -148,10 +148,12 @@ https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter
 sha256 191ac9529ae506ee0beefa6b2c945a172dab9d07d1e802a290a4e4038226658b
 ```
 
-See the [MediaPipe image segmentation docs](https://ai.google.dev/edge/mediapipe/solutions/vision/image_segmenter)
-for its model card and license.
+It is licensed under the Apache License 2.0; see the
+[MediaPipe image segmentation docs](https://ai.google.dev/edge/mediapipe/solutions/vision/image_segmenter)
+for its model card.
 
 ## License
 
-Code: MIT (see `LICENSE`). The model and the sample video are not covered by
-the MIT license — see above for the model's source.
+Code: MIT (see `LICENSE`). The model is Apache 2.0 (see above). The sample
+video is © Sam Bhattacharyya and included with permission for use with this
+benchmark.
