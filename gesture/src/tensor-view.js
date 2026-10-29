@@ -41,14 +41,17 @@ export class TensorView {
     })
   }
 
-  draw() {
+  // empty: just clear the canvas (nothing worth showing).
+  draw({ empty = false } = {}) {
     const encoder = this.device.createCommandEncoder()
     const pass = encoder.beginRenderPass({
       colorAttachments: [{ view: this.context.getCurrentTexture().createView(), loadOp: 'clear', storeOp: 'store' }],
     })
-    pass.setPipeline(this.pipeline)
-    pass.setBindGroup(0, this.bindGroup)
-    pass.draw(3)
+    if (!empty) {
+      pass.setPipeline(this.pipeline)
+      pass.setBindGroup(0, this.bindGroup)
+      pass.draw(3)
+    }
     pass.end()
     this.device.queue.submit([encoder.finish()])
   }

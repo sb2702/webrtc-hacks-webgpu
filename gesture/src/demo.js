@@ -81,13 +81,17 @@ function render(frame, result) {
     view.height = frame.displayHeight
   }
   ctx.drawImage(frame, 0, 0)
-  if (result.palm) drawPalm(ctx, result.palm)
-  if (result.rect) drawRect(ctx, result.rect)
-  if (result.hand) drawHand(ctx, result.hand.landmarks)
-  palmView.draw()
-  cropView.draw()
-
+  // Overlays and model-input previews only when there's a hand: a palm box or
+  // crop that the landmark model rejected is just noise on screen.
   const hand = result.hand
+  if (hand) {
+    if (result.palm) drawPalm(ctx, result.palm)
+    drawRect(ctx, result.rect)
+    drawHand(ctx, hand.landmarks)
+  }
+  palmView.draw({ empty: !hand })
+  cropView.draw({ empty: !hand })
+
   $('#gesture').textContent = hand ? hand.gesture.name.replace('_', ' ') : '—'
   $('#gesture-score').textContent = hand ? `score ${hand.gesture.score.toFixed(2)}` : 'no hand'
   // MediaPipe's handedness assumes a mirrored (selfie) image.
