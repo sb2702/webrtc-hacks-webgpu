@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hand gestures: check against MediaPipe</title>
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+  <header>
+    <h1>Check: our pipeline vs MediaPipe</h1>
+    <p>
+      Runs each image through our WebGPU pipeline (with the GPU and the JS NMS) and through
+      MediaPipe's own <code>GestureRecognizer</code> (image mode) using the same
+      <code>.task</code> file, and compares the results. Landmark error is the mean distance
+      between our landmarks and MediaPipe's (CPU delegate), as a fraction of the image size.
+      For scale, the next column is how far MediaPipe's own GPU delegate is from its CPU
+      delegate on the same image: same models, different resizing.
+      <span class="legend"><i style="background:#00e676"></i>ours</span>
+      <span class="legend"><i style="background:#ff4081"></i>MediaPipe</span>
+      <span class="legend"><i style="background:#ffd600"></i>our crop</span>
+    </p>
+    <p>
+      <button id="camera">Add a camera frame</button>
+      <a href="/">← live demo</a>
+      <span id="status">Loading models…</span>
+    </p>
+  </header>
+  <main>
+    <table id="results">
+      <thead>
+        <tr>
+          <th>Image</th><th>Gesture (ours / MediaPipe)</th><th>Handedness</th>
+          <th>Landmark error, ours vs MediaPipe</th><th>MediaPipe GPU vs CPU</th><th>World landmarks</th><th>GPU vs JS NMS</th><th></th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div id="images"></div>
+  </main>
+  <script type="module" src="/src/check.js"></script>
+</body>
+</html>

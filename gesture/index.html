@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hand gestures on WebGPU</title>
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+  <header>
+    <h1>Hand gestures on WebGPU</h1>
+    <p>
+      MediaPipe's gesture models run by LiteRT.js, with every pre- and post-processing step
+      (resize, non-maximum suppression, rotated hand crop) written as WebGPU shaders. Frames never
+      leave the GPU; the CPU only receives 21 landmarks per frame.
+      <a href="/check.html">Check against MediaPipe →</a>
+    </p>
+  </header>
+  <main>
+    <div class="controls">
+      <button id="camera">Start camera</button>
+      <label><input type="file" id="file" accept="video/*,image/*"> or a video / image file</label>
+      <label>NMS
+        <select id="nms">
+          <option value="gpu">WebGPU (WGSL)</option>
+          <option value="js">JavaScript</option>
+        </select>
+      </label>
+      <label><input type="checkbox" id="tracking" checked> Tracking</label>
+      <label><input type="checkbox" id="mirror" checked> Mirror</label>
+    </div>
+    <div class="stage">
+      <canvas id="view" width="1280" height="720"></canvas>
+      <aside>
+        <p id="gesture">—</p>
+        <p id="gesture-score">Start the camera and show a hand.</p>
+        <p id="hand-info"></p>
+        <div class="tensors">
+          <figure><canvas id="palm-input"></canvas><figcaption>Palm detector input</figcaption></figure>
+          <figure><canvas id="crop-input"></canvas><figcaption>Landmark model input</figcaption></figure>
+        </div>
+        <dl id="stats"></dl>
+      </aside>
+    </div>
+    <p>
+      <span class="legend"><i style="background:#29b6f6"></i>palm detection (only on frames where the detector ran)</span>
+      <span class="legend"><i style="background:#ffd600"></i>rotated crop given to the landmark model</span>
+      <span class="legend"><i style="background:#00e676"></i>landmarks</span>
+    </p>
+  </main>
+  <script type="module" src="/src/demo.js"></script>
+</body>
+</html>

@@ -23,6 +23,10 @@ so the benchmark is a real WebCodecs transcode (decode → effect → H.264 enco
 → mux), and the live demo is the WebRTC insertable-streams pattern
 (`MediaStreamTrackProcessor` → effect → `MediaStreamTrackGenerator`).
 
+**Also in this repo:** [`gesture/`](gesture/), a self-contained hand gesture
+recognition demo (MediaPipe's gesture models on LiteRT.js, with zero-copy
+WebGPU pre/post-processing: resize, NMS in WGSL, rotated crop, tracking).
+
 **Results:** [`results/`](results/) · **How it's measured and what it doesn't
 tell you:** [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md)
 

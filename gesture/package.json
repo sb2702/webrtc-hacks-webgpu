@@ -1,0 +1,25 @@
+{
+  "name": "webgpu-hand-gestures",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MediaPipe's hand gesture models in the browser with LiteRT.js, with all pre/post-processing (resize, NMS, rotated crop, tracking) on WebGPU",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "postinstall": "node tools/copy_vendor.mjs",
+    "dev": "vite --port 5174 --strictPort",
+    "test": "node tools/check.mjs",
+    "fetch-test-images": "node tools/fetch_test_images.mjs"
+  },
+  "dependencies": {
+    "@litertjs/core": "2.5.3",
+    "@mediapipe/tasks-vision": "1.1.1"
+  },
+  "devDependencies": {
+    "playwright-core": "1.64.1",
+    "vite": "8.3.2"
+  }
+}
