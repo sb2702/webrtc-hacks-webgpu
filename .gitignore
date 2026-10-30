@@ -1,6 +1,6 @@
 node_modules/
 __pycache__/
 dist/
-web/public/vendor/
+segmentation/web/public/vendor/
 # internal working notes
 notes/

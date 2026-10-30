@@ -1,5 +1,8 @@
 # Hand gesture recognition on WebGPU, from just the model files
 
+One of the demos for a webrtcHacks article on WebGPU for real-time video
+([all demos](../README.md)).
+
 A small, readable reference for building a real-time ML video pipeline in the
 browser when all you have is a model, not a framework. It runs Google's
 MediaPipe **gesture recognizer** models with [LiteRT.js](https://ai.google.dev/edge/litert/web),
@@ -36,6 +39,7 @@ same `.task` file ([below](#is-it-right)).
 Requirements: Node 20+ and Chrome or Edge (WebGPU, plus `MediaStreamTrackProcessor` for the live demo).
 
 ```sh
+cd gesture
 npm install        # also copies LiteRT's and MediaPipe's WASM files into public/vendor
 npm run dev        # http://localhost:5174
 ```
@@ -162,4 +166,4 @@ calculators (Apache 2.0); source files are named in the comments.
 
 The test images are MediaPipe's and are downloaded, not committed.
 
-Code: MIT.
+Code: MIT (see [`LICENSE`](../LICENSE)).
