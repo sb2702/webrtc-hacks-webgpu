@@ -29,6 +29,8 @@ tell you:** [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md)
 
 ## Headline numbers (Apple M4 MacBook, Chrome 156)
 
+![Frames per second at 360p, Apple M4](results/2026-10-28-apple-m4-360p.svg)
+
 360p and 720p transcode, 192 frames, median of 5 runs after a warm-up. Full
 table, run-to-run spread and caveats in
 [`results/2026-10-28-apple-m4.md`](results/2026-10-28-apple-m4.md).

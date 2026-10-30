@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 422" width="820" height="422" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-labelledby="t d">
+<title id="t">Selfie segmentation throughput, 360p transcode, Apple M4</title>
+<desc id="d">Frames per second for decode, background replacement and encode of a 640×360 clip in Chrome 156 on an Apple M4 MacBook, median of 5 runs. Passthrough (decode → encode only): 1158; WebNN, fp16 (Neural Engine): 548; LiteRT.js — WebGPU: 359; Vibe-coded shaders — WebGPU: 358; LiteRT.js — WASM: 334; WebNN — CPU: 266; WebNN — GPU, fp32: 219; Vibe-coded shaders — WebGL2: 153; MediaPipe — GPU (WebGL): 147; MediaPipe — CPU (WASM): 143.</desc>
+<rect width="820" height="422" fill="#fcfcfb"/>
+<text x="16" y="30" font-size="18" font-weight="600" fill="#0b0b0b">Selfie segmentation in the browser: frames per second</text>
+<text x="16" y="52" font-size="13" fill="#52514e">360p decode → background replacement → H.264 encode · Apple M4 MacBook, Chrome 156 · median of 5 runs · higher is better</text>
+<line x1="250.0" y1="72" x2="250.0" y2="378" stroke="#e6e5e0" stroke-width="1"/>
+<text x="250.0" y="396" font-size="12" fill="#52514e" text-anchor="middle">0</text>
+<line x1="335.0" y1="72" x2="335.0" y2="378" stroke="#e6e5e0" stroke-width="1"/>
+<text x="335.0" y="396" font-size="12" fill="#52514e" text-anchor="middle">200</text>
+<line x1="420.0" y1="72" x2="420.0" y2="378" stroke="#e6e5e0" stroke-width="1"/>
+<text x="420.0" y="396" font-size="12" fill="#52514e" text-anchor="middle">400</text>
+<line x1="505.0" y1="72" x2="505.0" y2="378" stroke="#e6e5e0" stroke-width="1"/>
+<text x="505.0" y="396" font-size="12" fill="#52514e" text-anchor="middle">600</text>
+<line x1="590.0" y1="72" x2="590.0" y2="378" stroke="#e6e5e0" stroke-width="1"/>
+<text x="590.0" y="396" font-size="12" fill="#52514e" text-anchor="middle">800</text>
+<line x1="675.0" y1="72" x2="675.0" y2="378" stroke="#e6e5e0" stroke-width="1"/>
+<text x="675.0" y="396" font-size="12" fill="#52514e" text-anchor="middle">1000</text>
+<line x1="760.0" y1="72" x2="760.0" y2="378" stroke="#e6e5e0" stroke-width="1"/>
+<text x="760.0" y="396" font-size="12" fill="#52514e" text-anchor="middle">1200</text>
+<text x="505.0" y="414" font-size="12" fill="#52514e" text-anchor="middle">frames per second</text>
+<g><title>Passthrough (decode → encode only): 1158 fps</title><path d="M250,84.0 H738.1 Q742.1,84.0 742.1,88.0 V98.0 Q742.1,102.0 738.1,102.0 H250 Z" fill="#9a9890"/></g>
+<text x="240" y="97.5" font-size="13" fill="#0b0b0b" text-anchor="end" font-style="italic">Passthrough (decode → encode only)</text>
+<text x="748.1" y="97.5" font-size="12" fill="#52514e" font-variant-numeric="tabular-nums">1,158</text>
+<g><title>WebNN, fp16 (Neural Engine): 548 fps</title><path d="M250,114.0 H478.9 Q482.9,114.0 482.9,118.0 V128.0 Q482.9,132.0 478.9,132.0 H250 Z" fill="#2a78d6"/></g>
+<text x="240" y="127.5" font-size="13" fill="#0b0b0b" text-anchor="end">WebNN, fp16 (Neural Engine)</text>
+<text x="488.9" y="127.5" font-size="12" fill="#52514e" font-variant-numeric="tabular-nums">548</text>
+<g><title>LiteRT.js — WebGPU: 359 fps</title><path d="M250,144.0 H398.6 Q402.6,144.0 402.6,148.0 V158.0 Q402.6,162.0 398.6,162.0 H250 Z" fill="#2a78d6"/></g>
+<text x="240" y="157.5" font-size="13" fill="#0b0b0b" text-anchor="end">LiteRT.js — WebGPU</text>
+<text x="408.6" y="157.5" font-size="12" fill="#52514e" font-variant-numeric="tabular-nums">359</text>
+<g><title>Vibe-coded shaders — WebGPU: 358 fps</title><path d="M250,174.0 H398.1 Q402.1,174.0 402.1,178.0 V188.0 Q402.1,192.0 398.1,192.0 H250 Z" fill="#2a78d6"/></g>
+<text x="240" y="187.5" font-size="13" fill="#0b0b0b" text-anchor="end">Vibe-coded shaders — WebGPU</text>
+<text x="408.1" y="187.5" font-size="12" fill="#52514e" font-variant-numeric="tabular-nums">358</text>
+<g><title>LiteRT.js — WASM: 334 fps</title><path d="M250,204.0 H387.9 Q391.9,204.0 391.9,208.0 V218.0 Q391.9,222.0 387.9,222.0 H250 Z" fill="#2a78d6"/></g>
+<text x="240" y="217.5" font-size="13" fill="#0b0b0b" text-anchor="end">LiteRT.js — WASM</text>
+<text x="397.9" y="217.5" font-size="12" fill="#52514e" font-variant-numeric="tabular-nums">334</text>
+<g><title>WebNN — CPU: 266 fps</title><path d="M250,234.0 H359.1 Q363.1,234.0 363.1,238.0 V248.0 Q363.1,252.0 359.1,252.0 H250 Z" fill="#2a78d6"/></g>
+<text x="240" y="247.5" font-size="13" fill="#0b0b0b" text-anchor="end">WebNN — CPU</text>
+<text x="369.1" y="247.5" font-size="12" fill="#52514e" font-variant-numeric="tabular-nums">266</text>
+<g><title>WebNN — GPU, fp32: 219 fps</title><path d="M250,264.0 H339.1 Q343.1,264.0 343.1,268.0 V278.0 Q343.1,282.0 339.1,282.0 H250 Z" fill="#2a78d6"/></g>
+<text x="240" y="277.5" font-size="13" fill="#0b0b0b" text-anchor="end">WebNN — GPU, fp32</text>
+<text x="349.1" y="277.5" font-size="12" fill="#52514e" font-variant-numeric="tabular-nums">219</text>
+<g><title>Vibe-coded shaders — WebGL2: 153 fps</title><path d="M250,294.0 H311.0 Q315.0,294.0 315.0,298.0 V308.0 Q315.0,312.0 311.0,312.0 H250 Z" fill="#2a78d6"/></g>
+<text x="240" y="307.5" font-size="13" fill="#0b0b0b" text-anchor="end">Vibe-coded shaders — WebGL2</text>
+<text x="321.0" y="307.5" font-size="12" fill="#52514e" font-variant-numeric="tabular-nums">153</text>
+<g><title>MediaPipe — GPU (WebGL): 147 fps</title><path d="M250,324.0 H308.5 Q312.5,324.0 312.5,328.0 V338.0 Q312.5,342.0 308.5,342.0 H250 Z" fill="#2a78d6"/></g>
+<text x="240" y="337.5" font-size="13" fill="#0b0b0b" text-anchor="end">MediaPipe — GPU (WebGL)</text>
+<text x="318.5" y="337.5" font-size="12" fill="#52514e" font-variant-numeric="tabular-nums">147</text>
+<g><title>MediaPipe — CPU (WASM): 143 fps</title><path d="M250,354.0 H306.8 Q310.8,354.0 310.8,358.0 V368.0 Q310.8,372.0 306.8,372.0 H250 Z" fill="#2a78d6"/></g>
+<text x="240" y="367.5" font-size="13" fill="#0b0b0b" text-anchor="end">MediaPipe — CPU (WASM)</text>
+<text x="316.8" y="367.5" font-size="12" fill="#52514e" font-variant-numeric="tabular-nums">143</text>
+<line x1="250" y1="72" x2="250" y2="378" stroke="#52514e" stroke-width="1"/>
+</svg>
