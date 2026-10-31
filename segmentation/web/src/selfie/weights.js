@@ -11,8 +11,15 @@
 export async function loadWeights(base) {
   const [manifest, blob] = await Promise.all([
     fetch(`${base}.json`).then((r) => r.json()),
-    fetch(`${base}.bin`).then((r) => r.arrayBuffer()).then((b) => new Float32Array(b)),
+    fetch(`${base}.bin`).then((r) => r.arrayBuffer()),
   ])
+  return parseWeights(manifest, blob)
+}
+
+// manifest: the parsed .json, blob: the .bin as an ArrayBuffer. Split out from
+// loadWeights so non-browser code (server-effects/) can read the files itself.
+export function parseWeights(manifest, buffer) {
+  const blob = new Float32Array(buffer)
   const layers = {}
   for (const [name, l] of Object.entries(manifest)) {
     const n = l.shape.reduce((a, b) => a * b, 1)

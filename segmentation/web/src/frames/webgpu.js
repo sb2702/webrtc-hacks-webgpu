@@ -8,7 +8,7 @@
 
 // Video frames are imported zero-copy as texture_external; anything else
 // (ImageBitmap, canvas, <img>) is copied into an rgba8 texture first.
-const FRAME_BINDING = {
+export const FRAME_BINDING = {
   external: { decl: 'texture_external', sample: (uv) => `textureSampleBaseClampToEdge(frame, samp, ${uv})` },
   texture: { decl: 'texture_2d<f32>', sample: (uv) => `textureSampleLevel(frame, samp, ${uv}, 0.0)` },
 }
@@ -16,7 +16,7 @@ const FRAME_BINDING = {
 // Stretch the frame to the model's input size (like MediaPipe). Each output
 // pixel averages 4 bilinear taps — roughly a 4x4 box filter — so a 720p ->
 // 256x256 downscale doesn't alias.
-const preprocessShader = (kind) => /* wgsl */ `
+export const preprocessShader = (kind) => /* wgsl */ `
 struct P { out_w: u32, out_h: u32, stride: u32 }
 @group(0) @binding(0) var<uniform> p: P;
 @group(0) @binding(1) var<storage, read_write> dst: array<f32>;
@@ -42,7 +42,7 @@ fn main(@builtin(global_invocation_id) id: vec3u) {
 
 // Full-screen pass: mix(color, frame, mask). The mask is a storage buffer, so
 // it's upsampled with a hand-written bilinear filter.
-const compositeShader = (kind) => /* wgsl */ `
+export const compositeShader = (kind) => /* wgsl */ `
 struct P { color: vec4f, out_size: vec2f, mask_w: u32, mask_h: u32, stride: u32 }
 @group(0) @binding(0) var<uniform> p: P;
 @group(0) @binding(1) var<storage, read> mask: array<f32>;

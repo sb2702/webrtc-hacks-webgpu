@@ -1,0 +1,17 @@
+{
+  "name": "webgpu-server-effects",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The browser selfie-segmentation WebGPU shaders, run server-side on Dawn (the `webgpu` npm package) with ffmpeg for decode/encode",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "demo": "node effect.mjs ../segmentation/web/public/media/woman_on_video_call.mp4 output.mp4"
+  },
+  "dependencies": {
+    "webgpu": "0.6.2"
+  }
+}
