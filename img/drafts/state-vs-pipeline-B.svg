@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 690" width="1120" height="690" role="img" aria-label="Two draws: WebGL re-binds global state, WebGPU switches prebuilt objects">
+<title>Two draws: WebGL re-binds global state, WebGPU switches prebuilt objects</title><defs><marker id="agl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#eb6834"/></marker><marker id="agpu" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/></marker><marker id="aink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker></defs>
+<rect width="1120" height="690" fill="#ffffff"/>
+<rect x="16" y="16" width="1088" height="340" rx="14" fill="#f5f4f0" stroke="none" stroke-width="1.5"/>
+<text x="36" y="50" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="22" font-weight="700" fill="#eb6834" text-anchor="start">WebGL</text>
+<text x="124" y="50" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="17" font-weight="400" fill="#52514e" text-anchor="start">two draws = re-binding the shared state in between</text>
+<text x="36" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#52514e" text-anchor="start">ARRAY_BUFFER</text>
+<line x1="190" y1="107" x2="1074" y2="107" stroke="#c9c7be" stroke-width="1.5"/>
+<text x="36" y="158" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#52514e" text-anchor="start">TEXTURE_2D</text>
+<line x1="190" y1="153" x2="1074" y2="153" stroke="#c9c7be" stroke-width="1.5"/>
+<text x="36" y="204" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#52514e" text-anchor="start">PROGRAM</text>
+<line x1="190" y1="199" x2="1074" y2="199" stroke="#c9c7be" stroke-width="1.5"/>
+<text x="36" y="250" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#52514e" text-anchor="start">BLEND</text>
+<line x1="190" y1="245" x2="1074" y2="245" stroke="#c9c7be" stroke-width="1.5"/>
+<rect x="194" y="233" width="40" height="24" rx="12" fill="#ffffff" stroke="#c9c7be" stroke-width="1.5"/>
+<text x="214" y="250" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12" font-weight="600" fill="#52514e" text-anchor="middle">off</text>
+<rect x="186" y="95" width="88" height="24" rx="12" fill="#ffffff" stroke="#eb6834" stroke-width="1.5"/>
+<text x="230" y="112" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12" font-weight="600" fill="#0b0b0b" text-anchor="middle">verts</text>
+<text x="230" y="295" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#52514e" text-anchor="middle">bindBuffer</text>
+<rect x="298" y="141" width="88" height="24" rx="12" fill="#ffffff" stroke="#eb6834" stroke-width="1.5"/>
+<text x="342" y="158" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12" font-weight="600" fill="#0b0b0b" text-anchor="middle">photo</text>
+<text x="342" y="295" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#52514e" text-anchor="middle">bindTexture</text>
+<rect x="410" y="187" width="88" height="24" rx="12" fill="#ffffff" stroke="#eb6834" stroke-width="1.5"/>
+<text x="454" y="204" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12" font-weight="600" fill="#0b0b0b" text-anchor="middle">blur</text>
+<text x="454" y="295" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#52514e" text-anchor="middle">useProgram</text>
+<line x1="566" y1="86" x2="566" y2="266" stroke="#eb6834" stroke-width="3"/>
+<rect x="522" y="276" width="88" height="28" rx="6" fill="#ffffff" stroke="#eb6834" stroke-width="2"/>
+<text x="566" y="295" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="700" fill="#0b0b0b" text-anchor="middle">draw 1</text>
+<rect x="634" y="141" width="88" height="24" rx="12" fill="#ffffff" stroke="#eb6834" stroke-width="1.5"/>
+<text x="678" y="158" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12" font-weight="600" fill="#0b0b0b" text-anchor="middle">logo</text>
+<text x="678" y="295" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#52514e" text-anchor="middle">bindTexture</text>
+<rect x="746" y="187" width="88" height="24" rx="12" fill="#ffffff" stroke="#eb6834" stroke-width="1.5"/>
+<text x="790" y="204" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12" font-weight="600" fill="#0b0b0b" text-anchor="middle">sharpen</text>
+<text x="790" y="295" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#52514e" text-anchor="middle">useProgram</text>
+<rect x="858" y="233" width="88" height="24" rx="12" fill="#ffffff" stroke="#eb6834" stroke-width="1.5"/>
+<text x="902" y="250" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12" font-weight="600" fill="#0b0b0b" text-anchor="middle">on</text>
+<text x="902" y="295" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#52514e" text-anchor="middle">enable BLEND</text>
+<line x1="1014" y1="86" x2="1014" y2="266" stroke="#eb6834" stroke-width="3"/>
+<rect x="970" y="276" width="88" height="28" rx="6" fill="#ffffff" stroke="#eb6834" stroke-width="2"/>
+<text x="1014" y="295" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="700" fill="#0b0b0b" text-anchor="middle">draw 2</text>
+<text x="36" y="330" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="13" font-weight="400" fill="#52514e" text-anchor="start">Each draw reads every row as it is at that moment. Forget to switch BLEND back off, and next frame draw 1 blends too.</text>
+<rect x="16" y="372" width="1088" height="302" rx="14" fill="#f5f4f0" stroke="none" stroke-width="1.5"/>
+<text x="36" y="406" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="22" font-weight="700" fill="#2a78d6" text-anchor="start">WebGPU</text>
+<text x="134" y="406" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="17" font-weight="400" fill="#52514e" text-anchor="start">two draws = pointing at different prebuilt objects</text>
+<text x="36" y="442" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="13" font-weight="400" fill="#52514e" text-anchor="start">built once, at setup</text>
+<text x="560" y="442" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="13" font-weight="400" fill="#52514e" text-anchor="start">every frame: the command list</text>
+<rect x="36" y="456" width="200" height="74" rx="10" fill="#ffffff" stroke="#2a78d6" stroke-width="2"/>
+<text x="48" y="478" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14" font-weight="700" fill="#2a78d6" text-anchor="start">pipeline A</text>
+<text x="48" y="500" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#0b0b0b" text-anchor="start">shader: blur</text>
+<text x="48" y="520" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#0b0b0b" text-anchor="start">blend: off</text>
+<rect x="252" y="456" width="200" height="74" rx="10" fill="#ffffff" stroke="#2a78d6" stroke-width="2"/>
+<text x="264" y="478" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14" font-weight="700" fill="#2a78d6" text-anchor="start">bind group A</text>
+<text x="264" y="500" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#0b0b0b" text-anchor="start">verts, photo</text>
+<path d="M456,493 L552,493" fill="none" stroke="#2a78d6" stroke-width="1.8" marker-end="url(#agpu)"/>
+<rect x="560" y="477" width="164" height="32" rx="6" fill="#ffffff" stroke="#c9c7be" stroke-width="1.5"/>
+<text x="642" y="498" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#0b0b0b" text-anchor="middle">setPipeline(A)</text>
+<rect x="736" y="477" width="164" height="32" rx="6" fill="#ffffff" stroke="#c9c7be" stroke-width="1.5"/>
+<text x="818" y="498" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#0b0b0b" text-anchor="middle">setBindGroup(0, A)</text>
+<rect x="912" y="477" width="164" height="32" rx="6" fill="#ffffff" stroke="#2a78d6" stroke-width="2"/>
+<text x="994" y="498" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="700" fill="#0b0b0b" text-anchor="middle">draw 1</text>
+<rect x="36" y="548" width="200" height="74" rx="10" fill="#ffffff" stroke="#2a78d6" stroke-width="2"/>
+<text x="48" y="570" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14" font-weight="700" fill="#2a78d6" text-anchor="start">pipeline B</text>
+<text x="48" y="592" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#0b0b0b" text-anchor="start">shader: sharpen</text>
+<text x="48" y="612" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#0b0b0b" text-anchor="start">blend: on</text>
+<rect x="252" y="548" width="200" height="74" rx="10" fill="#ffffff" stroke="#2a78d6" stroke-width="2"/>
+<text x="264" y="570" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14" font-weight="700" fill="#2a78d6" text-anchor="start">bind group B</text>
+<text x="264" y="592" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#0b0b0b" text-anchor="start">verts, logo</text>
+<path d="M456,585 L552,585" fill="none" stroke="#2a78d6" stroke-width="1.8" marker-end="url(#agpu)"/>
+<rect x="560" y="569" width="164" height="32" rx="6" fill="#ffffff" stroke="#c9c7be" stroke-width="1.5"/>
+<text x="642" y="590" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#0b0b0b" text-anchor="middle">setPipeline(B)</text>
+<rect x="736" y="569" width="164" height="32" rx="6" fill="#ffffff" stroke="#c9c7be" stroke-width="1.5"/>
+<text x="818" y="590" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#0b0b0b" text-anchor="middle">setBindGroup(0, B)</text>
+<rect x="912" y="569" width="164" height="32" rx="6" fill="#ffffff" stroke="#2a78d6" stroke-width="2"/>
+<text x="994" y="590" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="700" fill="#0b0b0b" text-anchor="middle">draw 2</text>
+<text x="36" y="654" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="13" font-weight="400" fill="#52514e" text-anchor="start">Nothing is shared between the draws, so nothing leaks from one to the next, and each object was validated and compiled once, when it was created.</text>
+</svg>
